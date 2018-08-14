@@ -5,17 +5,24 @@ import {
     StyleSheet
 } from "react-native";
 
-class ItemScreen extends Component {
-    
+class TopicScreen extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            topic: this.props.navigation.state.params
+        }
+        console.log(this.state.topic);        
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <Text>ItemScreen</Text>
+                <Text>TopicScreen</Text>
             </View>
         );
     }
 }
-export default ItemScreen;
+export default TopicScreen;
 
 const styles = StyleSheet.create({
     container: {

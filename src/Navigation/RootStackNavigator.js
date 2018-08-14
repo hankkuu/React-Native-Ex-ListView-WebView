@@ -4,25 +4,28 @@ import {
     Text,
     StyleSheet
 } from "react-native";
+import { createStackNavigator } from 'react-navigation';
 import ListScreen from '../Screens/ListScreen';
 import ItemScreen from '../Screens/ItemScreen';
+import TopicScreen from '../Screens/TopicScreen';
 
 class RootStackNavigator extends Component {
     render() {
         return (
-            <View style={styles.container}>
+            //<View style={styles.container}>
                 <RootStack />
-            </View>
+            //</View>
         );
     }
 }
 export default RootStackNavigator;
 
-const RootStack = createStackNavigation({
+const RootStack = createStackNavigator({
     List: { screen: ListScreen },
-    Item: { screen: ItemScreen }
+    Item: { screen: ItemScreen },
+    Topic: { screen: TopicScreen }
 }, {
-    intiRouteName: List
+    intiRouteName: 'List',
 })
 
 const styles = StyleSheet.create({
