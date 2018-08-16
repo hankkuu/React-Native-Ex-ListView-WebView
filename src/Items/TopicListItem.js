@@ -3,15 +3,17 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableHighlight
+    TouchableHighlight,
+    Image
 } from "react-native";
+import { getFormattedDate, getAvatarURL } from '../Util/Formatter';
 
 class TopicListItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
             topic: this.props.topic,
-            //poster: this.props.topic.poster[0]
+            poster: this.props.topic.posters[0]
         }
         //console.log(this.state.topic);
 
@@ -26,19 +28,19 @@ class TopicListItem extends Component {
         }
 
         return (
-            <View style={styles.container}>
+            <View >
                 <TouchableHighlight onPress={this.handleSelect} >
                     <View style={[styles.row, topic.pinned && styles.pinned]}>
                         <View style={styles.textContainer}>
                             <Text style={styles.title}>{topic.title}</Text>
                             <View style={styles.metaContainer}>
                                 <View style={[styles.category, { backgroundColor: '#' + topic.category.color }]}></View>
-                                <Text style={styles.meta}>ddd
-                                    {/* {topic.category.name} · {this.getFormattedDate(topic.created_at)} · {topic.views}명 읽음 · 댓글 {topic.posts_count - 1}개 */}
+                                <Text style={styles.meta}>
+                                    {topic.category.name} · {getFormattedDate(topic.created_at)} · {topic.views}명 읽음 · 댓글 {topic.posts_count - 1}개
                                 </Text>
                             </View>
                         </View>
-                        {/* <Image style={styles.avatar} source={{uri:this.getAvatarURL(poster.avatar_template, 25)}} /> */}
+                        <Image style={styles.avatar} source={{uri:getAvatarURL(poster.avatar_template, 25)}} />
                     </View>
                 </TouchableHighlight>
             </View>
@@ -47,7 +49,7 @@ class TopicListItem extends Component {
 
     handleSelect = () => {
         //console.log(this.state.topic);
-        //console.log(this.props.topic);
+        //console.log("fffff");
         //const { topic } = this.state;
         return this.props.onSelect(this.props.topic);
     }

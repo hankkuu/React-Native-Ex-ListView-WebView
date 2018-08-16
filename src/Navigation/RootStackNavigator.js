@@ -26,6 +26,9 @@ const RootStack = createStackNavigator({
     Topic: { screen: TopicScreen }
 }, {
     intiRouteName: 'List',
+    navigationOptions: {
+        title: 'List View Tester'
+    }
 })
 
 const styles = StyleSheet.create({

@@ -9,29 +9,28 @@ import {
 import TopicListItem from '../Items/TopicListItem';
 import TopicScreen from './TopicScreen';
 import { StackAction } from 'react-navigation';
-import { HOST, API_LATEST, API_SITE } from '../../config'
+import { HOST, API_LATEST, API_SITE } from '../../config';
+import { _ }  from 'lodash';
 
 class ListScreen extends Component {
     constructor(props) {
         super(props);
         const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1.id !== r2.id });
 
-        let secondArr = [];
-        for (let i = 1; i < 100; i++)
-            secondArr.push({ title: 'Sample Title' + i, sub: 'Write your message here.', txt: "힘있다 이것" });
-
         this.state = {
-            user: {},
+            users: {},
             topics: [],
             categories: null,
             _prevY: 0,
             currentPage: 0,
             reloading: false,
             loadingNextPage: false,
-            ds: dataSource.cloneWithRows(secondArr)
-        }
-        
+            ds: dataSource
+        }        
     }
+
+
+    
     render() {
         return (
             
@@ -53,6 +52,7 @@ class ListScreen extends Component {
 
     componentDidMount() {
         if (this.state.topics.length === 0) {
+            console.log("componentDidMount reload");
           this.reloadTopics();
         }
       }
@@ -73,6 +73,7 @@ class ListScreen extends Component {
         //     passProps: { topic: topic }
         // })
         //console.log(topic);
+        //let params = { id: 'Item', title: '', topic: topic };
         this.props.navigation.push('Topic', topic)
     }
 
@@ -86,7 +87,7 @@ class ListScreen extends Component {
         this._prevY = posY;
     }
 
-    reloadTopics() {
+    reloadTopics = () => {
         if (this.state.reloading)
             return;
 
@@ -103,22 +104,27 @@ class ListScreen extends Component {
    * 타입체커에서 확인할 수 있도록 page 인수의 타입을 number로 설정했다.
    * page 뒤에 붙은 ? 표시는 이 값이 생략될 수도 있다는 뜻이다.
    */
-    loadPage(page) {
+    loadPage = (page) => {
         var url = (page === undefined) ? this.moreURL : API_LATEST.replace('{page}', page);
         var jsonHeader = {headers:{Accept:'application/json'}};
 
-        var req = fetch(HOST + url, jsonHeader).then(res => res.json());
+        //console.log(HOST+url);
+
+        var req = fetch(HOST + url, jsonHeader).then( res => res.json() );
+        //console.log(req);
 
         return Promise.all([req, this.loadCategories()])
             .then(([data, categories]) => {
                 
+                //console.log(data);
+                //console.log(categories);
                 data.users.forEach(user => {
-                    this.users[user.id] = user;
+                    this.state.users[user.id] = user;
                 });
 
                 var topics = data.topic_list.topics.map(topic => {
                     topic = _.pick(topic, 'id', 'title', 'posters', 'category_id', 'pinned', 'created_at', 'posts_count', 'views');
-                    topic.posters.map((poster) => _.extend(poster, this.users[poster.user_id]));
+                    topic.posters.map((poster) => _.extend(poster, this.state.users[poster.user_id]));
                     topic.category = this.state.categories[topic.category_id];
 
                     return topic;
@@ -128,17 +134,19 @@ class ListScreen extends Component {
                 this.state.topics = (page === 0 ? [] : this.state.topics).concat(topics);
                 this.setState({
                     currentPage: page,
-                    ds: this.state.dataSource.cloneWithRows(this.state.topics)
+                    ds: this.state.ds.cloneWithRows(this.state.topics)
                 });
             })
             .catch(reason => {
+                console.log("catch!!");
                 console.log(reason);
             });
     }
 
     // 카테고리 정보를 불러온다.
     // 이미 불러왔으면 바로 resolve된 Promise 인스턴스를 반환한다.
-    loadCategories() {
+    loadCategories = () => {
+        //console.log(this.state.categories);
         if (this.state.categories) {
             return Promise.resolve(this.state.categories);
         } else {
@@ -146,12 +154,13 @@ class ListScreen extends Component {
             return fetch(HOST + API_SITE, jsonHeader).then(res => res.json()).then(data => {
                 this.state.categories = {};
                 data.categories.forEach(cate => this.state.categories[cate.id] = cate);
+                //console.log(this.state.categories);
                 return this.state.categories;
             });
         }
     }
 
-    handleEndReached() {
+    handelEndReached = () => {
         console.log("sdfsdf");
         if (this.state.loadingNextPage)
             return;

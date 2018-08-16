@@ -12,6 +12,8 @@
     "expo": "^29.0.0",
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-29.0.0.tar.gz",
+    "react-native-webintent": "^1.0.4",
+    "react-native-webview-android": "^1.1.17",
     "react-navigation": "^2.11.2"
   }
 }
